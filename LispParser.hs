@@ -12,7 +12,9 @@ data LAtom = LSymbol LSymbol | LString String | LInt Int deriving Show
 data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 
 lispParser :: Parser LProg
-lispParser = magic
+lispParser = ((return . LAtom) =<< latom) <|>
+             ((return . LList) =<< llist) <|>
+             ((return . LQuote) =<< lquote)
 
 latom :: Parser LAtom
 latom = magic
