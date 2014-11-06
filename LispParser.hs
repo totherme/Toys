@@ -17,10 +17,15 @@ lispParser = ((return . LAtom) =<< latom) <|>
              ((return . LQuote) =<< lquote)
 
 latom :: Parser LAtom
-latom = magic
+latom = ((return . LSymbol) =<< lsymbol) <|>
+        ((return . LString) =<< lstring) <|>
+        ((return . LInt) =<< lint)
 
 lsymbol :: Parser LSymbol
-lsymbol = magic
+lsymbol = many1 lsymbchar
+
+lsymbchar :: Parser Char
+lsymbchar = choice [letter, digit, char '!', char '?', char '/', char '@'] -- bored now
 
 lstring :: Parser String
 lstring = magic
