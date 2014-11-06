@@ -35,7 +35,7 @@ lstring = do
   return body
 
 lstringbody :: Parser String
-lstringbody = many $ choice [lsymbchar, lescapedChar]
+lstringbody = many $ choice [lsymbchar, space, lescapedChar]
 
 lescapedChar :: Parser Char
 lescapedChar = do
@@ -60,7 +60,7 @@ llist = do
 llistbody :: Parser [LProg]
 llistbody = do
   prog <- lispParser
-  rest <- (llistbody <|> (return []))
+  rest <- ((many1 space >> llistbody) <|> (return []))
   return $ prog:rest
     
 lquote :: Parser LProg
@@ -68,6 +68,3 @@ lquote = do
   char '\'' 
   prog <- lispParser
   return $ LQuote prog
-
-  
-                                                                 
