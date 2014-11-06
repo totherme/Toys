@@ -35,12 +35,7 @@ lstring = do
   return body
 
 lstringbody :: Parser String
-lstringbody = many $ choice [lsymbchar, space, lescapedChar]
-
-lescapedChar :: Parser Char
-lescapedChar = do
-  char '\\'
-  anyChar
+lstringbody = many $ choice [lsymbchar, space, (char '\\' >> anyChar)]
 
 lstringchar :: Parser Char
 lstringchar = choice [lsymbchar, space]
