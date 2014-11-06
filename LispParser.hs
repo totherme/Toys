@@ -2,8 +2,8 @@ module LispParser where
 
 import Text.ParserCombinators.Parsec
 
-magic :: a
-magic = error "Not implemented yet."
+-- magic :: a
+-- magic = error "Not implemented yet."
 
 type LSymbol = String
 
@@ -28,7 +28,22 @@ lsymbchar :: Parser Char
 lsymbchar = choice [letter, digit, char '!', char '?', char '/', char '@'] -- bored now
 
 lstring :: Parser String
-lstring = magic
+lstring = do
+  char '"'
+  body <- lstringbody
+  char '"'
+  return body
+
+lstringbody :: Parser String
+lstringbody = many $ choice [lsymbchar, lescapedChar]
+
+lescapedChar :: Parser Char
+lescapedChar = do
+  char '\\'
+  anyChar
+
+lstringchar :: Parser Char
+lstringchar = choice [lsymbchar, space]
 
 lint :: Parser Int
 lint = (return . read) =<< many1 digit
