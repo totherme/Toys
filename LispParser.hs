@@ -52,17 +52,10 @@ llist :: Parser [LProg]
 llist = do
   char '('
   many space
-  progs <- llistbody
-  many space
+  progs <- sepEndBy lispParser (many1 space)
   char ')'
   return $ progs
 
-llistbody :: Parser [LProg]
-llistbody = do
-  prog <- lispParser
-  rest <- ((many1 space >> llistbody) <|> (return []))
-  return $ prog:rest
-    
 lquote :: Parser LProg
 lquote = do
   char '\'' 
