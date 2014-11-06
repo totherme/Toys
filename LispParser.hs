@@ -34,9 +34,25 @@ lint :: Parser Int
 lint = (return . read) =<< many1 digit
 
 llist :: Parser [LProg]
-llist = magic
+llist = do
+  char '('
+  many space
+  progs <- llistbody
+  many space
+  char ')'
+  return $ progs
 
+llistbody :: Parser [LProg]
+llistbody = do
+  prog <- lispParser
+  rest <- (llistbody <|> (return []))
+  return $ prog:rest
+    
 lquote :: Parser LProg
-lquote = magic
+lquote = do
+  char '\'' 
+  prog <- lispParser
+  return $ LQuote prog
+
   
                                                                  
