@@ -25,7 +25,7 @@ lsymbol :: Parser LSymbol
 lsymbol = many1 lsymbchar
 
 lsymbchar :: Parser Char
-lsymbchar = choice [letter, digit, char '!', char '?', char '/', char '@'] -- bored now
+lsymbchar = choice [letter, digit, oneOf "!?/@£$%^&*-_=+:#~.,><|"]
 
 lstring :: Parser String
 lstring = do
