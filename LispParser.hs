@@ -31,7 +31,7 @@ lstring :: Parser String
 lstring = magic
 
 lint :: Parser Int
-lint = magic
+lint = (return . read) =<< many1 digit
 
 llist :: Parser [LProg]
 llist = magic
