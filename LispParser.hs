@@ -63,8 +63,3 @@ lfile = do
   prog <- lprog
   eof
   return prog
-
-parseLispFile :: FilePath -> IO LProg
-parseLispFile path = do
-  fileContents <- readFile path
-  either (error . show) return $ parse lfile (show path) fileContents
