@@ -53,6 +53,16 @@ llist = (do
 lquote :: Parser LProg
 lquote = char '\'' >> fmap LQuote lispParser
 
+lcomment :: Parser ()
+lcomment = char ';' >> many anyChar >> eol >> return () -- Of course, this could eat the whole file...
+           -- Should learn a good way of doing anyChar \setminus eol
+           
+eol :: Parser String
+eol = (try $ string "\r\n") <|>
+      (try $ string "\n\r") <|>
+      string "\n" <|>
+      string "\r"
+
 parseLispFile :: FilePath -> IO LProg
 parseLispFile path = do
   fileContents <- readFile path
