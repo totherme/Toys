@@ -37,9 +37,6 @@ lstring = do
 lstringbody :: Parser String
 lstringbody = many $ choice [lsymbchar, space, (char '\\' >> anyChar)]
 
-lstringchar :: Parser Char
-lstringchar = choice [lsymbchar, space]
-
 lint :: Parser Int
 lint = (return . read) =<< many1 digit
 
