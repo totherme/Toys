@@ -56,15 +56,8 @@ lquote :: Parser LProg
 lquote = char '\'' >> fmap LQuote lprog
 
 lcomment :: Parser ()
-lcomment = char ';' >> many anyChar >> eol >> return () -- Of course, this could eat the whole file...
-           -- Should learn a good way of doing anyChar \setminus eol
+lcomment = char ';' >> many (noneOf "\n\r") >> newline >> return ()
            
-eol :: Parser String
-eol = (try $ string "\r\n") <|>
-      (try $ string "\n\r") <|>
-      string "\n" <|>
-      string "\r"
-
 lfile :: Parser LProg
 lfile = do
   prog <- lprog
