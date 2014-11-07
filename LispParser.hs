@@ -38,7 +38,7 @@ lstringbody :: Parser String
 lstringbody = many $ choice [lsymbchar, space, (char '\\' >> anyChar)]
 
 lint :: Parser Int
-lint = (return . read) =<< many1 digit
+lint = fmap read $ many1 digit
 
 llist :: Parser [LProg]
 llist = do
@@ -49,7 +49,5 @@ llist = do
   return $ progs
 
 lquote :: Parser LProg
-lquote = do
-  char '\'' 
-  prog <- lispParser
-  return $ LQuote prog
+lquote = char '\'' >> fmap LQuote lispParser
+
