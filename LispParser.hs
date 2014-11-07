@@ -22,7 +22,8 @@ latom = (fmap LSymbol lsymbol) <|>
         (fmap LInt lint)
 
 lsymbol :: Parser LSymbol
-lsymbol = many1 lsymbchar
+lsymbol = many1 lsymbchar <?>
+          "symbol"
 
 lsymbchar :: Parser Char
 lsymbchar = choice [letter, digit, oneOf "!?/@£$%^&*-_=+:#~.,><|"]
@@ -41,12 +42,13 @@ lint :: Parser Int
 lint = fmap read $ many1 digit
 
 llist :: Parser [LProg]
-llist = do
+llist = (do
   char '('
   many space
   progs <- sepEndBy lispParser (many1 space)
   char ')'
-  return $ progs
+  return $ progs)
+        <?> "s-expression"
 
 lquote :: Parser LProg
 lquote = char '\'' >> fmap LQuote lispParser
