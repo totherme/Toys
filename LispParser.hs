@@ -11,11 +11,11 @@ data LAtom = LSymbol LSymbol | LString String | LInt Int deriving Show
 
 data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 
-lispParser :: Parser LProg
-lispParser = (fmap LAtom latom) <|>
-             (fmap LList llist) <|>
-             (fmap LQuote lquote) <|>
-             (lcomment >> lispParser)
+lprog :: Parser LProg
+lprog = (fmap LAtom latom) <|>
+        (fmap LList llist) <|>
+        (fmap LQuote lquote) <|>
+        (lcomment >> lprog)
 
 latom :: Parser LAtom
 latom = (fmap LSymbol lsymbol) <|>
@@ -47,13 +47,13 @@ llist :: Parser [LProg]
 llist = (do
   char '('
   many space
-  progs <- sepEndBy lispParser (many1 space)
+  progs <- sepEndBy lprog (many1 space)
   char ')'
   return $ progs)
         <?> "s-expression"
 
 lquote :: Parser LProg
-lquote = char '\'' >> fmap LQuote lispParser
+lquote = char '\'' >> fmap LQuote lprog
 
 lcomment :: Parser ()
 lcomment = char ';' >> many anyChar >> eol >> return () -- Of course, this could eat the whole file...
@@ -65,7 +65,13 @@ eol = (try $ string "\r\n") <|>
       string "\n" <|>
       string "\r"
 
+lfile :: Parser LProg
+lfile = do
+  prog <- lprog
+  eof
+  return prog
+
 parseLispFile :: FilePath -> IO LProg
 parseLispFile path = do
   fileContents <- readFile path
-  either (error . show) return $ parse lispParser (show path) fileContents
+  either (error . show) return $ parse lfile (show path) fileContents
