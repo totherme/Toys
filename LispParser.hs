@@ -14,12 +14,14 @@ data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 lispParser :: Parser LProg
 lispParser = (fmap LAtom latom) <|>
              (fmap LList llist) <|>
-             (fmap LQuote lquote)
+             (fmap LQuote lquote) <|>
+             (lcomment >> lispParser)
 
 latom :: Parser LAtom
 latom = (fmap LSymbol lsymbol) <|>
         (fmap LString lstring) <|>
-        (fmap LInt lint)
+        (fmap LInt lint) <|>
+        (lcomment >> latom)
 
 lsymbol :: Parser LSymbol
 lsymbol = many1 lsymbchar <?>
