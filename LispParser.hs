@@ -5,17 +5,20 @@ import Text.ParserCombinators.Parsec
 -- magic :: a
 -- magic = error "Not implemented yet."
 
+-- AST for a simple lisp
+
 type LSymbol = String
 
 data LAtom = LSymbol LSymbol | LString String | LInt Int deriving Show
 
 data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 
+-- Parser for that simple lisp, sans comments
+                                                                 
 lprog :: Parser LProg
-lprog = many space >> ((fmap LAtom latom) <|>
-                       (fmap LList llist) <|>
-                       (fmap LQuote lquote) <|>
-                       (lcomment >> lprog))
+lprog = ((fmap LAtom latom) <|>
+         (fmap LList llist) <|>
+         (fmap LQuote lquote))
 
 latom :: Parser LAtom
 latom = (fmap LSymbol lsymbol) <|>
@@ -47,7 +50,6 @@ llist = (do
             char '('
             many space
             progs <- sepEndBy lprog (many1 space)
-            many lcomment
             char ')'
             return $ progs)
         <?> "s-expression"
@@ -55,12 +57,32 @@ llist = (do
 lquote :: Parser LProg
 lquote = (char '\'' >> fmap LQuote lprog) <?> "lquote"
 
-lcomment :: Parser ()
-lcomment = (char ';' >> many (noneOf "\n\r") >> newline >> return ())
-           <?> "lcomment"
-           
 lfile :: Parser [LProg]
 lfile = do
-  progs <- many lprog
+  many space
+  progs <- sepEndBy lprog (many space)
   eof
   return progs
+
+-- Parser to strip comments from a lisp file
+
+lcomment :: Parser String
+lcomment = (char ';' >> many (noneOf "\n\r") >> newline >> return "")
+           <?> "lcomment"
+
+commentStripper :: Parser String
+commentStripper = do
+  parts <- many1 (lcomment <|> (fmap (:[]) (noneOf "\";")) <|> (lstring >> return ""))
+  return $ concat parts
+
+-- Stringing the two together
+           
+lparse :: String -> Either ParseError [LProg]
+lparse str = let stripped = parse commentStripper "" str in
+  either Left (parse lfile "") stripped
+
+lparseFile :: FilePath -> IO (Either ParseError [LProg])
+lparseFile path = do
+  contents <- readFile path
+  return $ lparse contents
+              
