@@ -12,54 +12,55 @@ data LAtom = LSymbol LSymbol | LString String | LInt Int deriving Show
 data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 
 lprog :: Parser LProg
-lprog = (fmap LAtom latom) <|>
-        (fmap LList llist) <|>
-        (fmap LQuote lquote) <|>
-        (lcomment >> lprog)
+lprog = many space >> ((fmap LAtom latom) <|>
+                       (fmap LList llist) <|>
+                       (fmap LQuote lquote) <|>
+                       (lcomment >> lprog))
 
 latom :: Parser LAtom
 latom = (fmap LSymbol lsymbol) <|>
         (fmap LString lstring) <|>
-        (fmap LInt lint) <|>
-        (lcomment >> latom)
+        (fmap LInt lint) <?> "atom"
 
 lsymbol :: Parser LSymbol
 lsymbol = many1 lsymbchar <?>
           "symbol"
 
 lsymbchar :: Parser Char
-lsymbchar = choice [letter, digit, oneOf "!?/@£$%^&*-_=+:#~.,><|"]
+lsymbchar = choice [letter, digit, oneOf "!?/@£$%^&*-_=+:#~.,><|"] <?> "symbol-char"
 
 lstring :: Parser String
-lstring = do
+lstring = (do
   char '"'
   body <- lstringbody
   char '"'
-  return body
+  return body) <?> "lstring"
 
 lstringbody :: Parser String
-lstringbody = many $ choice [lsymbchar, space, (char '\\' >> anyChar)]
+lstringbody = (many $ choice [noneOf "\\\"", (char '\\' >> anyChar)]) <?> "lstringbody"
 
 lint :: Parser Int
-lint = fmap read $ many1 digit
+lint = (fmap read $ many1 digit) <?> "lint"
 
 llist :: Parser [LProg]
 llist = (do
-  char '('
-  many space
-  progs <- sepEndBy lprog (many1 space)
-  char ')'
-  return $ progs)
+            char '('
+            many space
+            progs <- sepEndBy lprog (many1 space)
+            many lcomment
+            char ')'
+            return $ progs)
         <?> "s-expression"
 
 lquote :: Parser LProg
-lquote = char '\'' >> fmap LQuote lprog
+lquote = (char '\'' >> fmap LQuote lprog) <?> "lquote"
 
 lcomment :: Parser ()
-lcomment = char ';' >> many (noneOf "\n\r") >> newline >> return ()
+lcomment = (char ';' >> many (noneOf "\n\r") >> newline >> return ())
+           <?> "lcomment"
            
-lfile :: Parser LProg
+lfile :: Parser [LProg]
 lfile = do
-  prog <- lprog
+  progs <- many lprog
   eof
-  return prog
+  return progs
