@@ -53,3 +53,7 @@ llist = (do
 lquote :: Parser LProg
 lquote = char '\'' >> fmap LQuote lispParser
 
+parseLispFile :: FilePath -> IO LProg
+parseLispFile path = do
+  fileContents <- readFile path
+  either (error . show) return $ parse lispParser (show path) fileContents
