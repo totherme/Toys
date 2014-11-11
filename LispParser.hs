@@ -2,9 +2,6 @@ module LispParser where
 
 import Text.ParserCombinators.Parsec
 
--- magic :: a
--- magic = error "Not implemented yet."
-
 -- AST for a simple lisp
 
 type LSymbol = String
@@ -70,9 +67,17 @@ lcomment :: Parser String
 lcomment = (char ';' >> many (noneOf "\n\r") >> newline >> return "")
            <?> "lcomment"
 
+lcstring :: Parser String
+lcstring = (do
+               char '"'
+               body <- (fmap concat $ many $ choice [noneOf "\\\"" >>= return . (:[]), (char '\\' >> anyChar >>= \c -> return ("\\"++[c]))])
+               char '"'
+               return ('\"':body++"\"")) <?> "lstring"
+
 commentStripper :: Parser String
 commentStripper = do
-  parts <- many1 (lcomment <|> (fmap (:[]) (noneOf "\";")) <|> (lstring >> return ""))
+  parts <- many1 (lcomment <|> (fmap (:[]) (noneOf "\";")) <|> (lcstring))
+  eof
   return $ concat parts
 
 -- Stringing the two together
