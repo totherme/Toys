@@ -1,5 +1,6 @@
 module LispParser where
 
+import Control.Monad (liftM)
 import Text.ParserCombinators.Parsec
 
 -- AST for a simple lisp
@@ -13,14 +14,14 @@ data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 -- Parser for that simple lisp, sans comments
                                                                  
 lprog :: Parser LProg
-lprog = ((fmap LAtom latom) <|>
-         (fmap LList llist) <|>
-         (fmap LQuote lquote))
+lprog = fmap LAtom latom <|>
+        fmap LList llist <|>
+        fmap LQuote lquote
 
 latom :: Parser LAtom
-latom = (fmap LSymbol lsymbol) <|>
-        (fmap LString lstring) <|>
-        (fmap LInt lint) <?> "atom"
+latom = fmap LSymbol lsymbol <|>
+        fmap LString lstring <|>
+        fmap LInt lint <?> "atom"
 
 lsymbol :: Parser LSymbol
 lsymbol = many1 lsymbchar <?>
@@ -31,24 +32,24 @@ lsymbchar = choice [letter, digit, oneOf "!?/@£$%^&*-_=+:#~.,><|"] <?> "symbol-
 
 lstring :: Parser String
 lstring = (do
-  char '"'
+  _ <- char '"'
   body <- lstringbody
-  char '"'
+  _ <- char '"'
   return body) <?> "lstring"
 
 lstringbody :: Parser String
-lstringbody = (many $ choice [noneOf "\\\"", (char '\\' >> anyChar)]) <?> "lstringbody"
+lstringbody = many (choice [noneOf "\\\"", char '\\' >> anyChar]) <?> "lstringbody"
 
 lint :: Parser Int
-lint = (fmap read $ many1 digit) <?> "lint"
+lint = fmap read (many1 digit) <?> "lint"
 
 llist :: Parser [LProg]
 llist = (do
-            char '('
-            many space
+            _ <- char '('
+            _ <- many space
             progs <- sepEndBy lprog (many1 space)
-            char ')'
-            return $ progs)
+            _ <- char ')'
+            return progs)
         <?> "s-expression"
 
 lquote :: Parser LProg
@@ -56,7 +57,7 @@ lquote = (char '\'' >> fmap LQuote lprog) <?> "lquote"
 
 lfile :: Parser [LProg]
 lfile = do
-  many space
+  _ <- many space
   progs <- sepEndBy lprog (many space)
   eof
   return progs
@@ -69,14 +70,14 @@ lcomment = (char ';' >> many (noneOf "\n\r") >> newline >> return "")
 
 lcstring :: Parser String
 lcstring = (do
-               char '"'
-               body <- (fmap concat $ many $ choice [noneOf "\\\"" >>= return . (:[]), (char '\\' >> anyChar >>= \c -> return ("\\"++[c]))])
-               char '"'
+               _ <- char '"'
+               body <- fmap concat $ many $ choice [liftM (:[]) (noneOf "\\\""), char '\\' >> anyChar >>= \c -> return ("\\"++[c])]
+               _ <- char '"'
                return ('\"':body++"\"")) <?> "lstring"
 
 commentStripper :: Parser String
 commentStripper = do
-  parts <- many1 (lcomment <|> (fmap (:[]) (noneOf "\";")) <|> (lcstring))
+  parts <- many1 (lcomment <|> fmap (:[]) (noneOf "\";") <|> lcstring)
   eof
   return $ concat parts
 
