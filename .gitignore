@@ -1,2 +1,4 @@
 *~
 /Parsec/dist/
+/Parsec/.cabal-sandbox/
+/Parsec/cabal.sandbox.config

@@ -3,7 +3,7 @@ module LispParser where
 import Control.Monad (liftM)
 import Text.ParserCombinators.Parsec
 
--- AST for a simple lisp
+-- * AST for a simple lisp
 
 type LSymbol = String
 
@@ -11,7 +11,7 @@ data LAtom = LSymbol LSymbol | LString String | LInt Int deriving Show
 
 data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving Show
 
--- Parser for that simple lisp, sans comments
+-- * Parser for that simple lisp, sans comments
                                                                  
 lprog :: Parser LProg
 lprog = fmap LAtom latom <|>
@@ -55,6 +55,7 @@ llist = (do
 lquote :: Parser LProg
 lquote = (char '\'' >> fmap LQuote lprog) <?> "lquote"
 
+-- | A parser for a whole lisp file -- a sequence of terms
 lfile :: Parser [LProg]
 lfile = do
   _ <- many space
@@ -62,7 +63,7 @@ lfile = do
   eof
   return progs
 
--- Parser to strip comments from a lisp file
+-- | Parser to strip comments from a lisp file
 
 lcomment :: Parser String
 lcomment = (char ';' >> many (noneOf "\n\r") >> newline >> return "")
@@ -81,12 +82,14 @@ commentStripper = do
   eof
   return $ concat parts
 
--- Stringing the two together
-           
+-- * Stringing the two together
+
+-- | Function that parses a string as a lisp program.  
 lparse :: String -> Either ParseError [LProg]
 lparse str = let stripped = parse commentStripper "" str in
   either Left (parse lfile "") stripped
 
+-- | Function that parses a file as a lisp program  
 lparseFile :: FilePath -> IO (Either ParseError [LProg])
 lparseFile path = do
   contents <- readFile path
