@@ -8,3 +8,13 @@ discoveries in the commit history of each branch.
 ** Parsec
    The first library I played with was Parsec. You can track my
    progres in the branch "LearningParsec".
+
+   My exercise was to build a simple lisp parser, which you can see in
+   the directory [[file:LispParser][LispParser]].
+
+** QuickCheck
+   Next up was the standard go-to for haskell quality control. You can
+   track progress in the branch "LearningQuickcheck".
+
+   My first exercise here was to test the [[file:LispParser][LispParser]] I started as a
+   Parsec exercise.

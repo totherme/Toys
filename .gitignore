@@ -2,3 +2,6 @@
 /Parsec/dist/
 /Parsec/.cabal-sandbox/
 /Parsec/cabal.sandbox.config
+/LispParser/.cabal-sandbox/*
+/LispParser/dist/*
+/LispParser/cabal.sandbox.config
