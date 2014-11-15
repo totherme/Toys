@@ -1,13 +1,16 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module LispParser where
 
 import Control.Monad (liftM)
 import Text.ParserCombinators.Parsec
+import GHC.Generics (Generic)
 
 -- * AST for a simple lisp
 
-type LSymbol = String
+data LSymbol = LSymbol String deriving (Eq,Show,Generic)
 
-data LAtom = LSymbol LSymbol | LString String | LInt Int deriving (Eq,Show)
+data LAtom = LAtSymbol LSymbol | LAtString String | LAtInt Int deriving (Eq,Show)
 
 data LProg = LAtom LAtom | LList [LProg] | LQuote LProg deriving (Eq,Show)
 
@@ -19,12 +22,12 @@ lprog = fmap LAtom latom <|>
         fmap LQuote lquote
 
 latom :: Parser LAtom
-latom = fmap LSymbol lsymbol <|>
-        fmap LString lstring <|>
-        fmap LInt lint <?> "atom"
+latom = fmap LAtSymbol lsymbol <|>
+        fmap LAtString lstring <|>
+        fmap LAtInt lint <?> "atom"
 
 lsymbol :: Parser LSymbol
-lsymbol = many1 lsymbchar <?>
+lsymbol = (fmap LSymbol $ many1 lsymbchar) <?>
           "symbol"
 
 lsymbchar :: Parser Char
