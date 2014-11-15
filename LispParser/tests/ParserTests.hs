@@ -3,23 +3,38 @@
 module Main where
 
 import LispParser
-import Test.QuickCheck
-import Text.Printf (printf)
-import Test.SmallCheck (smallCheck)
+import Test.QuickCheck (Arbitrary)
+import Test.QuickCheck (arbitrary)
+import Test.QuickCheck (elements)
+import Test.QuickCheck (listOf)
+import Test.QuickCheck (quickCheck)
 import Test.SmallCheck.Series (Serial)
-
--- Without this Arbitrary instance that kills spaces, the test below should really fail...
-instance Arbitrary LSymbol where
-  arbitrary = fmap LSymbol $ listOf $ elements $ ['a'..'z']++['A'..'Z']++['0'..'9']++['!','$','%','^','&','*','-','_','=','+',';',':','\'','@','#','~',',','.','<','>','/','?','\\','|']
-
-instance Serial m String => Serial m LSymbol
-
+import Test.SmallCheck.Series (generate)
+import Test.SmallCheck.Series (series)
+import Test.SmallCheck (Depth)
+import Test.SmallCheck (smallCheck)
+import Text.Printf (printf)
 
 class PrintCode a where
   printCode :: a -> String
 
 instance PrintCode LSymbol where
   printCode (LSymbol x) = x
+
+lsymchars :: [Char]
+lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++['!','$','%','^','&','*','-','_','=','+',';',':','\'','@','#','~',',','.','<','>','/','?','\\','|']
+
+-- Without this Arbitrary instance that kills spaces, the test below should really fail...
+
+instance Arbitrary LSymbol where
+  arbitrary = fmap LSymbol $ listOf $ elements lsymchars
+
+instance Monad m => Serial m LSymbol where
+  series = generate f where
+    f :: Depth -> [LSymbol]
+    f 0 = []
+    f 1 = [LSymbol "fred"] -- map (LSymbol . (:[])) lsymchars
+    f n = undefined
 
 main :: IO ()
 main  = mapM_ (\(s,a) -> printf "%-25s: " s >> quickCheck a >> smallCheck 4 a) tests 

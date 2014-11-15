@@ -1,14 +1,11 @@
-{-# LANGUAGE DeriveGeneric #-}
-
 module LispParser where
 
 import Control.Monad (liftM)
 import Text.ParserCombinators.Parsec
-import GHC.Generics (Generic)
 
 -- * AST for a simple lisp
 
-data LSymbol = LSymbol String deriving (Eq,Show,Generic)
+data LSymbol = LSymbol String deriving (Eq,Show)
 
 data LAtom = LAtSymbol LSymbol | LAtString String | LAtInt Int deriving (Eq,Show)
 
