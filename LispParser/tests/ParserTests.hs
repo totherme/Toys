@@ -22,19 +22,21 @@ instance PrintCode LSymbol where
   printCode (LSymbol x) = x
 
 lsymchars :: [Char]
-lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++['!','$','%','^','&','*','-','_','=','+',';',':','\'','@','#','~',',','.','<','>','/','?','\\','|']
+lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+;:\'@#~,.<>/?\\|"
 
 -- Without this Arbitrary instance that kills spaces, the test below should really fail...
 
 instance Arbitrary LSymbol where
   arbitrary = fmap LSymbol $ listOf $ elements lsymchars
 
+someSymbols :: Depth -> [LSymbol]
+someSymbols 0 = []
+someSymbols 1 = map (LSymbol . (:[])) lsymchars
+someSymbols n = shorters ++ (concat $ map (\(LSymbol x) -> (map (LSymbol . (:x)) lsymchars)) shorters) where
+  shorters = someSymbols (n-1)
+
 instance Monad m => Serial m LSymbol where
-  series = generate f where
-    f :: Depth -> [LSymbol]
-    f 0 = []
-    f 1 = [LSymbol "fred"] -- map (LSymbol . (:[])) lsymchars
-    f n = undefined
+  series = generate someSymbols where
 
 main :: IO ()
 main  = mapM_ (\(s,a) -> printf "%-25s: " s >> quickCheck a >> smallCheck 4 a) tests 
