@@ -23,7 +23,7 @@ instance PrintCode LSymbol where
   printCode (LSymbol x) = x
 
 lsymchars :: [Char]
-lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+;:\'@#~,.<>/?\\|"
+lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+;:@#~,.<>/?\\|"
 
 -- Without this Arbitrary instance that kills spaces, the test below should really fail...
 
