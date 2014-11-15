@@ -28,7 +28,7 @@ lsymbol = (fmap LSymbol $ many1 lsymbchar) <?>
           "symbol"
 
 lsymbchar :: Parser Char
-lsymbchar = choice [letter, digit, oneOf "!?/@£$%^&*-_=+:#~.,><|"] <?> "symbol-char"
+lsymbchar = choice [letter, digit, oneOf "!?/@$%^&*-_=+;:#~.,><|"] <?> "symbol-char"
 
 lstring :: Parser String
 lstring = (do
