@@ -28,7 +28,7 @@ escape ('\\':s) = "\\\\"++(escape s)
 escape (c:s) = c:(escape s)
 
 lsymchars :: [Char]
-lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+;:@#~,.<>/?\\|"
+lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+:@#~,.<>/?\\|"
 
 -- Without this Arbitrary instance that kills spaces, the test below should really fail...
 
@@ -45,7 +45,7 @@ instance Monad m => Serial m LSymbol where
   series = generate someSymbols where
 
 main :: IO ()
-main  = mapM_ (\(s,a) -> printf "%-25s: " s >> quickCheck a >> smallCheck 4 a) tests 
+main  = mapM_ (\(s,a) -> printf "%-25s: " s >> quickCheck a >> smallCheck 3 a) tests 
 
  
 -- reversing twice a finite list, is the same as identity

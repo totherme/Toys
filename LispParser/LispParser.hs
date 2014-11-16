@@ -28,7 +28,7 @@ lsymbol = (fmap LSymbol $ many1 (lsymbchar <|> (char '\\' >> oneOf ('\\':lsymbol
           "symbol"
 
 lsymbolcharacters :: [Char]
-lsymbolcharacters = ['a'..'z']++['A'..'Z']++['0'..'9']++"!?/@$%^&*-_=+;:#~.,><|"
+lsymbolcharacters = ['a'..'z']++['A'..'Z']++['0'..'9']++"!?/@$%^&*-_=+:#~.,><|"
 
 lsymbchar :: Parser Char
 lsymbchar = oneOf lsymbolcharacters <?> "symbol-char"
