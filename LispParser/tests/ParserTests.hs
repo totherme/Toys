@@ -20,7 +20,12 @@ class PrintCode a where
   printCode :: a -> String
 
 instance PrintCode LSymbol where
-  printCode (LSymbol x) = x
+  printCode (LSymbol x) = escape x
+
+escape :: String -> String
+escape [] = []
+escape ('\\':s) = "\\\\"++(escape s)
+escape (c:s) = c:(escape s)
 
 lsymchars :: [Char]
 lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+;:@#~,.<>/?\\|"

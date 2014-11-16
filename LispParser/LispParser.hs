@@ -24,11 +24,14 @@ latom = fmap LAtSymbol lsymbol <|>
         fmap LAtInt lint <?> "atom"
 
 lsymbol :: Parser LSymbol
-lsymbol = (fmap LSymbol $ many1 lsymbchar) <?>
+lsymbol = (fmap LSymbol $ many1 (lsymbchar <|> (char '\\' >> oneOf ('\\':lsymbolcharacters)))) <?>
           "symbol"
 
+lsymbolcharacters :: [Char]
+lsymbolcharacters = ['a'..'z']++['A'..'Z']++['0'..'9']++"!?/@$%^&*-_=+;:#~.,><|"
+
 lsymbchar :: Parser Char
-lsymbchar = choice [letter, digit, oneOf "!?/@$%^&*-_=+;:#~.,><|"] <?> "symbol-char"
+lsymbchar = oneOf lsymbolcharacters <?> "symbol-char"
 
 lstring :: Parser String
 lstring = (do
