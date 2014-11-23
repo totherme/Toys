@@ -24,8 +24,8 @@ instance PrintCode LSymbol where
 
 escape :: String -> String
 escape [] = []
-escape ('\\':s) = "\\\\"++(escape s)
-escape (c:s) = c:(escape s)
+escape ('\\':s) = "\\\\" ++ escape s
+escape (c:s) = c : escape s
 
 lsymchars :: [Char]
 lsymchars =  ['a'..'z']++['A'..'Z']++['0'..'9']++"!$%^&*-_=+:@#~,.<>/?\\|"
@@ -38,7 +38,7 @@ instance Arbitrary LSymbol where
 someSymbols :: Depth -> [LSymbol]
 someSymbols 0 = []
 someSymbols 1 = map (LSymbol . (:[])) lsymchars
-someSymbols n = shorters ++ (concat $ map (\(LSymbol x) -> (map (LSymbol . (:x)) lsymchars)) shorters) where
+someSymbols n = shorters ++ concatMap (\(LSymbol x) -> (map (LSymbol . (:x)) lsymchars)) shorters where
   shorters = someSymbols (n-1)
 
 instance Monad m => Serial m LSymbol where
@@ -53,7 +53,7 @@ prop_LSymbols_parse_themselves :: LSymbol -> Bool
 prop_LSymbols_parse_themselves s = parsed ==  [LAtom $ LAtSymbol s]
   where (Right parsed) = lparse $ printCode s
  
-tests :: [(String, (LSymbol -> Bool))]
+tests :: [(String, LSymbol -> Bool)]
 tests  = [("LSymbols parse their printed selves", prop_LSymbols_parse_themselves)]
 
          
