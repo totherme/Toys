@@ -1,14 +1,22 @@
 #!/usr/bin/env python
+
+# This is a quick-and-dirty script which archives the contents of each week's
+# riverford organics box, and indexes that archive so we can check it in a
+# browser. It is intended to run once per week in a cron job.
+
 import datetime
 import codecs
 import os
 import sys
 from pyquery import PyQuery as pq
 
+# Run where we're asked, or in the current directory.
 directory = "."
 if len(sys.argv)>1:
     directory = sys.argv[1]
 os.chdir(directory)
+
+# Get the current riverford box contents for wash farm.
 url = 'http://www.riverford.co.uk/isl/box-contents/'
 doc = pq(url=url)
 heading = doc('h1:last')
@@ -22,6 +30,7 @@ with codecs.open('riverford_'+time+'.htmlfrag', 'w', encoding='utf-8') as f:
     f.write('</table>')
     f.write('</div>')
 
+# Stitch together all the saved box contents into a single page.
 ls = os.listdir(directory)
 ls.sort()
 with codecs.open('index.html', 'w', encoding='utf-8') as out:
