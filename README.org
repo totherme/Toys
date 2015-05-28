@@ -1,10 +1,5 @@
-* Learning Haskell Libraries
+* Toys
 
-This repository contains a number of exercises with which I have been
-learning or re-learning a number of libraries. For each library I
-wanted to play with, I created a branch. You can follow my little
-discoveries in the commit history of each branch.
+This repository contains a number of little toys which scratch iches, and
+exercises with which I have been learning or re-learning libraries.
 
-** Parsec
-   The first library I played with was Parsec. You can track my
-   progres in the branch "LearningParsec".
