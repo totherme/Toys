@@ -1,5 +1,5 @@
 /**
- * A basic bot
+ * A basic bot that takes messages for people.
  */
 package org.totherme.bot;
 
@@ -16,11 +16,18 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.types.GenericMessageEvent;
 
 /**
- * This is the main guts of the bot. There are callback methods which fire whenever interesting things happen -- such as when we recieve messages.
+ * This is the main guts of the bot. There are callback methods which fire whenever interesting things happen -- such as when we receive messages.
  * 
  * @author gds
  */
 public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
+	
+	/**
+	 * The commands this bot implements
+	 */
+	private static final String TELL = "@tell";
+	private static final String MSGS = "@msgs";
+	private static final String QUIT = "@quit";
 	
 	/**
 	 * A single saved message.
@@ -90,22 +97,67 @@ public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
 		}
 	}
 	
+	/**
+	 * A command issued to the bot
+	 * @author gds
+	 *
+	 */
+	private class BotCommand {
+		private String command;
+		private String arguments;
+		
+		/**
+		 * 
+		 * @param command the name of the command
+		 * @param arguments the arguments (if any) of this command, or the empty string.
+		 */
+		public BotCommand(String command, String arguments) {
+			this.command = command;
+			this.arguments = arguments;
+		}
+		
+		public String getCommand() { return command; }
+		public String getArguments() { return arguments; }
+	}
+	
 	private MessageMap savedMessages = new MessageMap();
 	
+	/**
+	 * Attempts to parse msg as a command to the bot. 
+	 * 
+	 * @param msg an IRC message that may or may not be a bot command.
+	 * @return if a sensible parsing can be found, return a BotCommand representing it. Otherwise, return null.
+	 */
+	private BotCommand parseCommand(String msg) {
+		if (msg==null) return null;
+		if (!msg.startsWith("@")) return null;
+		
+		if(msg.indexOf(' ')==-1) return new BotCommand(msg, "");
+		
+		String command = msg.substring(0, msg.indexOf(' ')).trim();
+		String args = msg.substring(command.length()).trim();
+		return new BotCommand(command, args);
+	}
     /**
      * @Override
      * We use generic messages to implement commands. We use the convention that a command starts with an '@'.
      */
     public void onGenericMessage(GenericMessageEvent<T> event) {
     	String msg = event.getMessage();
+    	BotCommand cmd = parseCommand(msg);
+    	if (cmd==null) return;
+    	switch (cmd.getCommand()) {
+    	case TELL :
         // Command @tell stores a message for a recipient in savedMessages
-    	if (msg.startsWith("@tell ")) {
-    		String argument = msg.substring(6).trim();
-    		savedMessages.addMsg(argument.substring(0, argument.indexOf(' ')), new SavedMessage(event.getUser().getNick(), argument.substring(argument.indexOf(' ')).trim()));
+    		String argument = cmd.getArguments();
+    		if (argument.indexOf(' ')==-1) return;
+    		String recipient = argument.substring(0, argument.indexOf(' '));
+    		String msgbody = argument.substring(argument.indexOf(' ')).trim();
+    		savedMessages.addMsg(recipient, new SavedMessage(event.getUser().getNick(), msgbody));
             event.respond("Noted.");
-    	}
+            return;
         // Command @msgs replays and deletes your saved messages
-    	else if (msg.startsWith("@msgs")) {
+    	case MSGS :
     		List<SavedMessage> msgs = savedMessages.lookupDestructive(event.getUser().getNick());
     		if (msgs.isEmpty()) {
     			event.respond("You have no messages.");
@@ -116,6 +168,10 @@ public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
     			SavedMessage savmsg = it.next();
     			event.respond(savmsg.getSender() + " said " + savmsg.getMessage());
     		}
+    		return;
+    	case QUIT :
+    		event.getBot().sendIRC().quitServer(cmd.getArguments());
+    	default: return;
     	}
     }
 
