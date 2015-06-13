@@ -11,9 +11,12 @@ import java.util.Map;
 
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import org.pircbotx.hooks.types.GenericUserEvent;
 
 /**
  * This is the main guts of the bot. There are callback methods which fire whenever interesting things happen -- such as when we receive messages.
@@ -58,13 +61,21 @@ public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
 		public String getMessage() { return msg ; }
 	}
 	
+	private class MessageList extends ArrayList<SavedMessage> {
+		/**
+		 * generated serial version.
+		 */
+		private static final long serialVersionUID = -8622885729997390606L;
+		public boolean newmsgs = false;		
+	}
+	
 	/**
 	 * A message store
 	 * @author gds
 	 *
 	 */
 	private class MessageMap {
-		private Map<String, List<SavedMessage>> map = new HashMap<String,List<SavedMessage>>();
+		private Map<String, MessageList> map = new HashMap<String,MessageList>();
 		
 		/**
 		 * Look up what messages might be waiting for some recipient in this store, return those messages, and remove them from the store.
@@ -78,7 +89,7 @@ public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
 				map.remove(recipient);
 				return msgs;
 			}
-			else return new ArrayList<SavedMessage>();
+			else return new MessageList();
 		}
 		
 		/**
@@ -90,10 +101,22 @@ public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
 		public void addMsg(String recipiant, SavedMessage msg) {
 			if (map.containsKey(recipiant)) map.get(recipiant).add(msg);
 			else {
-				ArrayList<SavedMessage> list = new ArrayList<SavedMessage>();
+				MessageList list = new MessageList();
 				list.add(msg);
+				list.newmsgs = true;
 				map.put(recipiant, list);
 			}
+		}
+		
+		public boolean hasMsgsDestructive(String recipiant) {
+			if (!map.containsKey(recipiant)) return false;
+			MessageList msgs = map.get(recipiant);
+			if (msgs.newmsgs) {
+				msgs.newmsgs = false;
+				return true;
+			} 
+			else return false;
+			
 		}
 	}
 	
@@ -138,9 +161,45 @@ public class BunnyListener<T extends PircBotX> extends ListenerAdapter<T> {
 		String args = msg.substring(command.length()).trim();
 		return new BotCommand(command, args);
 	}
+	
+	/**
+	 * Try to find a URL in the string msg,
+	 * then try to fetch that URL
+	 * then try to return the title of the webpage we've just fetched
+	 * @param msg a string that may contain a URL
+	 * @return the "title" of that URL if we could find one. Otherwise null
+	 */
+	private String getURLTitle(String msg) {
+		return null;
+	}
+	
+	/**
+	 * @Override
+	 * URL titles are only gotten for channel messages
+	 */
+	public void onMessage(MessageEvent<T> event) {
+		String msg = event.getMessage();
+		String title = getURLTitle(msg);
+		if (title != null) {
+			event.getBot().sendIRC().message(event.getChannel().getName(), title);
+		}		
+	}
+	
+	/**
+	 * @Override
+	 * We use user events to track people who may have messages.
+	 */
+	public void onGenericUser(GenericUserEvent<T> event) {
+		User user = event.getUser();
+		// It looks like channel join events call this callback with a null user.
+		if(user != null && savedMessages.hasMsgsDestructive(user.getNick()))
+			event.respond("You have new messages. \"/msg " + event.getBot().getNick() + " @msgs to read them.");
+	}
+	
     /**
      * @Override
-     * We use generic messages to implement commands. We use the convention that a command starts with an '@'.
+     * We use generic messages (which may be channel messages, or privmsgs) to implement commands.
+     * We use the convention that a command starts with an '@'.
      */
     public void onGenericMessage(GenericMessageEvent<T> event) {
     	String msg = event.getMessage();
