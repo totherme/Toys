@@ -6,7 +6,6 @@ package org.totherme.bot;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -256,9 +255,7 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
     			event.respond("You have no messages.");
     			return;
     		}
-    		Iterator<SavedMessage> it = msgs.iterator();
-    		while(it.hasNext()) {
-    			SavedMessage savmsg = it.next();
+    		for (SavedMessage savmsg : msgs) {
     			event.respond(savmsg.getSender() + " said " + savmsg.getMessage());
     		}
     		return;
