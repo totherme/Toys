@@ -99,22 +99,27 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 		/**
 		 * Leave a message for recipient in this store.
 		 * 
-		 * @param recipiant
+		 * @param recipient
 		 * @param msg
 		 */
-		public void addMsg(String recipiant, SavedMessage msg) {
-			if (map.containsKey(recipiant)) map.get(recipiant).add(msg);
+		public void addMsg(String recipient, SavedMessage msg) {
+			if (map.containsKey(recipient)) map.get(recipient).add(msg);
 			else {
 				MessageList list = new MessageList();
 				list.add(msg);
 				list.newmsgs = true;
-				map.put(recipiant, list);
+				map.put(recipient, list);
 			}
 		}
 		
-		public boolean hasMsgsDestructive(String recipiant) {
-			if (!map.containsKey(recipiant)) return false;
-			MessageList msgs = map.get(recipiant);
+		/**
+		 * Checks if recipient needs to be notified of waiting messages.
+		 * @param recipient the nick of the user we're checking the messages of
+		 * @return true if we should tell recipient to look at their messages. False otherwise.
+		 */
+		public boolean needsNotifying(String recipient) {
+			if (!map.containsKey(recipient)) return false;
+			MessageList msgs = map.get(recipient);
 			if (msgs.newmsgs) {
 				msgs.newmsgs = false;
 				return true;
@@ -174,13 +179,13 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 	 * @return the "title" of that URL if we could find one. Otherwise null
 	 */
 	private String getURLTitle(String msg) {
-		int plainurlstart = msg.indexOf("http://");
-		int tlsurlstart = msg.indexOf("https://");
-		int urlstart = tlsurlstart==-1 ? plainurlstart : tlsurlstart;
+		int plainUrlStart = msg.indexOf("http://");
+		int tlsUrlStart = msg.indexOf("https://");
+		int urlStart = tlsUrlStart==-1 ? plainUrlStart : tlsUrlStart;
 		
-		if (urlstart == -1) return null; // There's no URL here. Move along.
+		if (urlStart == -1) return null; // There's no URL here. Move along.
 		
-		msg = msg.substring(urlstart);
+		msg = msg.substring(urlStart);
 		if (msg.indexOf(' ') != -1)
 			msg = msg.substring(0, msg.indexOf(' '));
 		
@@ -225,7 +230,7 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 	public void onGenericUser(GenericUserEvent<T> event) {
 		User user = event.getUser();
 		// It looks like channel join events call this callback with a null user.
-		if(user != null && savedMessages.hasMsgsDestructive(user.getNick()))
+		if(user != null && savedMessages.needsNotifying(user.getNick()))
 			event.respond("You have new messages. \"/msg " + event.getBot().getNick() + " " + MSGS + " to read them.");
 	}
 	
