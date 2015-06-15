@@ -207,9 +207,9 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 	}
 	
 	/**
-	 * @Override
 	 * URL titles are only gotten for channel messages
 	 */
+	@Override
 	public void onMessage(MessageEvent<T> event) {
 		String msg = event.getMessage();
 		String title = getURLTitle(msg);
@@ -219,21 +219,21 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 	}
 	
 	/**
-	 * @Override
 	 * We use user events to track people who may have messages.
 	 */
+	@Override
 	public void onGenericUser(GenericUserEvent<T> event) {
 		User user = event.getUser();
 		// It looks like channel join events call this callback with a null user.
 		if(user != null && savedMessages.hasMsgsDestructive(user.getNick()))
-			event.respond("You have new messages. \"/msg " + event.getBot().getNick() + " @msgs to read them.");
+			event.respond("You have new messages. \"/msg " + event.getBot().getNick() + " " + MSGS + " to read them.");
 	}
 	
     /**
-     * @Override
      * We use generic messages (which may be channel messages, or privmsgs) to implement commands.
      * We use the convention that a command starts with an '@'.
      */
+    @Override
     public void onGenericMessage(GenericMessageEvent<T> event) {
     	String msg = event.getMessage();
     	BotCommand cmd = parseCommand(msg);
