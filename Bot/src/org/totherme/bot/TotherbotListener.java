@@ -23,7 +23,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * This is the main guts of the bot. There are callback methods which fire whenever interesting things happen -- such as when we receive messages.
+ * This is the main guts of the bot. There are callback methods which fire whenever interesting 
+ * things happen -- such as when we receive messages.
  * 
  * @author gds
  */
@@ -82,7 +83,8 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 		private Map<String, MessageList> map = new HashMap<String,MessageList>();
 		
 		/**
-		 * Look up what messages might be waiting for some recipient in this store, return those messages, and remove them from the store.
+		 * Look up what messages might be waiting for some recipient in this store, return those 
+		 * messages, and remove them from the store.
 		 * 
 		 * @param recipient the nick of the person the messages might be addressed to.
 		 * @return all messages addressed to recipient
@@ -158,7 +160,8 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 	 * Attempts to parse msg as a command to the bot. 
 	 * 
 	 * @param msg an IRC message that may or may not be a bot command.
-	 * @return if a sensible parsing can be found, return a BotCommand representing it. Otherwise, return null.
+	 * @return if a sensible parsing can be found, return a BotCommand representing it. Otherwise, 
+	 *          return null.
 	 */
 	private BotCommand parseCommand(String msg) {
 		if (msg==null) return null;
@@ -231,7 +234,8 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
 		User user = event.getUser();
 		// It looks like channel join events call this callback with a null user.
 		if(user != null && savedMessages.needsNotifying(user.getNick()))
-			event.respond("You have new messages. \"/msg " + event.getBot().getNick() + " " + MSGS + " to read them.");
+			event.respond("You have new messages. \"/msg " + event.getBot().getNick() 
+						  + " " + MSGS + " to read them.");
 	}
 	
     /**
@@ -271,7 +275,8 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
     }
 
 	/**
-	 * Eventually, this should read in the magic strings from some configuration file, and possibly also have a CLI. For now, we just connect to our favourite server and a test channel.
+	 * Eventually, this should read in the magic strings from some configuration file, and possibly
+	 * also have a CLI. For now, we just connect to our favourite server and a test channel.
 	 * @param args
 	 */
     public static void main(String[] args) throws Exception {
