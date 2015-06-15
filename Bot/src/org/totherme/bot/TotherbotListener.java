@@ -293,6 +293,6 @@ public class TotherbotListener<T extends PircBotX> extends ListenerAdapter<T> {
         PircBotX bot = new PircBotX(configuration);
         //Connect to the server
         bot.startBot();
-}
+    }
 
 }
