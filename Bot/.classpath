@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/commons-codec-1.10/commons-codec-1.10-javadoc.jar"/>
+	<classpathentry kind="lib" path="libs/commons-codec-1.10/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="libs/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="libs/pircbotx-2.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-1.7.12/slf4j-simple-1.7.12.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/commons-lang3-3.4/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/commons-lang3-3.4/commons-lang3-3.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/slf4j-1.7.12/slf4j-api-1.7.12.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/slf4j-1.7.12/slf4j-ext-1.7.12.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-core-4.4.1/lib/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/httpclient-4.5.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/fluent-hc-4.5.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/httpclient-cache-4.5.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/httpclient-win-4.5.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/httpcomponents-client-4.5/lib/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/nekohtml-1.9.21/nekohtml.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/xerces-2_11_0/resolver.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/xerces-2_11_0/serializer.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/xerces-2_11_0/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/xerces-2_11_0/xercesSamples.jar"/>
+	<classpathentry kind="lib" path="/home/gds/Documents/code/Toys/Bot/libs/xerces-2_11_0/xml-apis.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
