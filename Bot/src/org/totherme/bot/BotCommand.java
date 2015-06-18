@@ -2,6 +2,7 @@ package org.totherme.bot;
 
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import org.pircbotx.hooks.types.GenericUserEvent;
 
 public interface BotCommand<T extends PircBotX> {
 
@@ -12,5 +13,7 @@ public interface BotCommand<T extends PircBotX> {
      */
     public String getCommandName();
     
-    public void run(String arguments, GenericMessageEvent<T> event);
+    public void runCommand(String arguments, GenericMessageEvent<T> event);
+    
+    public void passiveListen(GenericUserEvent<T> event);
 }

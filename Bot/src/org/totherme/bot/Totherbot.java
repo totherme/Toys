@@ -15,20 +15,16 @@ public class Totherbot {
         // The features we're enabling on this run
         URLTitleGetter<PircBotX> urlTitleGetter = new URLTitleGetter<PircBotX>();
         CommandManager<PircBotX> cmds = new CommandManager<PircBotX>();
-        QuitCommand<PircBotX> quitCmd = new QuitCommand<>();
-        MessageManager<PircBotX> msgManager = new MessageManager<PircBotX>();
-        cmds.registerCommand(quitCmd)
-            .registerCommand(msgManager.getTellCommand())
-            .registerCommand(msgManager.getMsgsCommand());
+        cmds.registerCommand(new QuitCommand<PircBotX>())
+            .registerCommand(new MessageManager<PircBotX>().getCommands());
         
         Configuration<PircBotX> configuration = new Configuration.Builder<PircBotX>()
-                        .setName("totherbot")
+                        .setName("totherbot3")
                         .setServerHostname("irc.elvum.net")
                         .setServerPort(6697)
                         .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates())
                         .addAutoJoinChannel("#gdsbottest")
                         .addListener(urlTitleGetter)
-                        .addListener(msgManager)
                         .addListener(cmds)
                         .buildConfiguration();
 

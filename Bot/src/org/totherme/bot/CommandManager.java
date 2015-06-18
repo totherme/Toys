@@ -6,6 +6,7 @@ import java.util.Map;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.types.GenericMessageEvent;
+import org.pircbotx.hooks.types.GenericUserEvent;
 
 public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
     
@@ -21,10 +22,22 @@ public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
         BotCommandInvocation cmd = BotCommandInvocation.parseCommand(msg);
         if (cmd==null) return;
         if (commands.containsKey(cmd.getCommand())) {
-            commands.get(cmd.getCommand()).run(cmd.getArguments(), event);
+            commands.get(cmd.getCommand()).runCommand(cmd.getArguments(), event);
         }
     }
 
+    /**
+     * We use user events to handle passive listening, for exmaple tracking when people were last
+     * seen, or who has messages
+     */
+    @Override
+    public void onGenericUser(GenericUserEvent<T> event) {
+        for(BotCommand<T> cmd : commands.values()) {
+            cmd.passiveListen(event);
+        }
+    }
+
+    
     /**
      * Register a BotCommand with this command manager.
      * 
@@ -35,6 +48,18 @@ public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
      */
     public CommandManager<T> registerCommand(BotCommand<T> cmd) {
         commands.put(cmd.getCommandName(), cmd);
+        return this;
+    }
+
+    /**
+     * Convenience for registering multiple commands at once. 
+     * @param commands an iterable collection of BotCommands to register
+     * @return this CommandManager (for chaining multiple registrations)
+     */
+    public CommandManager<T> registerCommand(Iterable<BotCommand<T>> commands) {
+        for (BotCommand<T> command : commands) {
+            this.registerCommand(command);
+        }
         return this;
     }
 }

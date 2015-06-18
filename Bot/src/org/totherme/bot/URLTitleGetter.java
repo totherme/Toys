@@ -6,14 +6,9 @@ package org.totherme.bot;
 import java.io.IOException;
 
 import org.cyberneko.html.parsers.DOMParser;
-import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
-import org.pircbotx.User;
-import org.pircbotx.UtilSSLSocketFactory;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-import org.pircbotx.hooks.types.GenericUserEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
