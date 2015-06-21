@@ -15,6 +15,7 @@ public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
     /**
      * We use generic messages (which may be channel messages, or privmsgs) to implement commands.
      * We use the convention that a command starts with an '@'.
+     * @requires event != null
      */
     @Override
     public void onGenericMessage(GenericMessageEvent<T> event) {
@@ -29,6 +30,7 @@ public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
     /**
      * We use user events to handle passive listening, for exmaple tracking when people were last
      * seen, or who has messages
+     * @requires event != null
      */
     @Override
     public void onGenericUser(GenericUserEvent<T> event) {
@@ -43,6 +45,7 @@ public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
      * 
      * This has the effect that whenever that command is invoked by an IRC user, the run method of 
      * the command will be called.
+     * @requires cmd != null
      * @param cmd the BotCommand to register with this command manager.
      * @return this CommandManager (for chaining multiple registrations).
      */
@@ -53,7 +56,8 @@ public class CommandManager<T extends PircBotX> extends ListenerAdapter<T> {
 
     /**
      * Convenience for registering multiple commands at once. 
-     * @param commands an iterable collection of BotCommands to register
+     * @requires commands != null
+     * @param commands an Iterable collection of BotCommands to register
      * @return this CommandManager (for chaining multiple registrations)
      */
     public CommandManager<T> registerCommand(Iterable<BotCommand<T>> commands) {

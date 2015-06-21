@@ -19,7 +19,7 @@ public class Totherbot {
             .registerCommand(new MessageManager<PircBotX>().getCommands());
         
         Configuration<PircBotX> configuration = new Configuration.Builder<PircBotX>()
-                        .setName("totherbot3")
+                        .setName("totherbot")
                         .setServerHostname("irc.elvum.net")
                         .setServerPort(6697)
                         .setSocketFactory(new UtilSSLSocketFactory().trustAllCertificates())
