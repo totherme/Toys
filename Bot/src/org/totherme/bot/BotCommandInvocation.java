@@ -34,9 +34,16 @@ public class BotCommandInvocation {
         if (!msg.startsWith("@")) return null; // not a command
         msg = msg.substring(1);         // Strip the command prefix
         
-        if(msg.indexOf(' ')==-1) return new BotCommandInvocation(msg, ""); // no arguments
+        if(msg.indexOf(' ')==-1 && msg.indexOf('\t')==-1) return new BotCommandInvocation(msg, "");
+        // no arguments
         
-        String command = msg.substring(0, msg.indexOf(' ')).trim();
+        char sep;
+        if(msg.indexOf(' ')==-1) sep = '\t';
+        else if (msg.indexOf('\t')==-1) sep = ' ';
+        else if (msg.indexOf(' ')<msg.indexOf('\t')) sep = ' ';
+        else sep = '\t';
+        
+        String command = msg.substring(0, msg.indexOf(sep)).trim();
         String args = msg.substring(command.length()).trim();
         return new BotCommandInvocation(command, args);
     }

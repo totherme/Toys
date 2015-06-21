@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ CommandManagerTest.class })
+@SuiteClasses({ BotCommandInvocationTest.class, CommandManagerTest.class })
 public class BotTests {
 
 }
