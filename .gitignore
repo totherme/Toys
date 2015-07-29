@@ -1,3 +1,8 @@
 *~
 /Bot/bin/org/totherme/bot/BunnyListener.class
 /Bot/old
+/Bot/bin/org/pircbotx/MockUser.class
+Bot/bin
+Bot/dist
+/Bot/libs
+/Bot/src/org/pircbotx/MockUser.java
